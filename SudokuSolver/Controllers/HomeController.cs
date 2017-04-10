@@ -10,12 +10,11 @@ namespace SudokuSolver.Controllers
 {
     public class HomeController : Controller
     {
-        public static List<Sudoku> sudokuForks = new List<Sudoku>();
-        int iterations;
+        public static Sudoku sudoku;
 
         public ActionResult Index()
         {
-            sudokuForks.Add(new Sudoku());
+            sudoku = new Sudoku();
             return View();
         }
 
@@ -28,14 +27,14 @@ namespace SudokuSolver.Controllers
             //for testing purposes -easy
             //id = "9,5,,,,,,,8,,1,7,2,,9,4,,,,2,4,5,,,,,9,,,,,,7,,,,3,7,8,,,,6,9,1,,,,1,,,,,,8,,,,,4,7,3,,,,3,7,,5,9,4,,9,,,,,,,5,1";
 
-            sudokuForks.ElementAt(0).LockNumbers(id);
+            sudoku.LockNumbers(id);
 
             return Json(new { Data = true }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Solve()
         {
-            string result = sudokuForks.ElementAt(0).Solve();
+            string result = sudoku.Solve();
 
             return Json(new { Data = result }, JsonRequestBehavior.AllowGet);
         }
