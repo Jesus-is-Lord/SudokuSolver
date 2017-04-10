@@ -1,0 +1,282 @@
+﻿@model SudokuSolver.Models.Sudoku
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>Sudoku Solver</h1>
+    <p class="lead">Solves any sudoku game.</p>
+    <p><a href="http://www.sudoku.name/rules/en" class="btn btn-primary btn-lg">Learn more about the rules of sudoku &raquo;</a></p>
+</div>
+
+<div class="row">
+
+    Start by entering in the numbers of your game in the cells below:
+    <br />
+    <br />
+
+    <table class="table">
+        <tr>
+            <td>
+                <table>
+                    <tr>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="1"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="2"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="3"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="4"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="5"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="6"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="7"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="8"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="9"></td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="10"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="11"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="12"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="13"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="14"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="15"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="16" ></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="17"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="18"></td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="19"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="20"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="21"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="22"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="23"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="24"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="25"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="26"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="27"></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="28"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="29"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="30"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="31"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="32"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="33"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="34"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="35"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="36"></td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="37"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="38"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="39"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="40"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="41"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="42"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="43"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="44"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="45"></td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="46"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="47"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="48"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="49"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="50"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="51"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="52"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="53"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="54"></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="55"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="56"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="57"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="58"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="59"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="60"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="61"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="62"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="63"></td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="64"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="65"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="66"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="67"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="68"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="69"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="70"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="71"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="72"></td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="73"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="74"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="75"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="76"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="77"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="78"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="79"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="80"></td>
+                                    <td><input type="text" maxlength="1" size="1" class="form-control" id="81"></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <button type="button" id="lockNumbersButton">Lock Numbers</button>
+                <button type="button" id="solveButton">Solve</button>
+            </td>
+        </tr>
+    </table>
+
+</div>
+
+<style>
+    table {
+        border-collapse: collapse;
+    }
+
+    table, td, th {
+        border: 1px solid black;
+    }
+</style>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script language="javascript">
+        $(document).ready(function () {
+            var result = [];
+            $("#solveButton").hide();
+
+            $("#lockNumbersButton").click(function () {
+
+                for (i = 1; i < 82; i++) {
+
+                    var currentValue = $("#" + i).val();
+
+                    if (currentValue !== "") {
+                        $("#" + i).css('color', 'red');
+                        $("#" + i).prop('disabled', true);
+                    }
+                    result.push(currentValue);
+                }
+
+                $.getJSON('/Home/LockNumbers/' + result)
+                    .done(function (data) {
+                        if (data.Data === false) {
+                            alert("error");
+                        }
+                        else {
+                            $("#lockNumbersButton").hide();
+                            $("#solveButton").show();
+                        }
+                    })
+                    .fail(function (jqXHR, textStatus, err) {
+                        alert('Error: ' + err);
+                    });
+
+                
+
+            });
+
+            $("#solveButton").click(function () {
+                $.getJSON('/Home/Solve/')
+                    .done(function (data) {
+                        if (data.Data.length === 0) {
+                            alert("Puzzle too complex to crack.");
+                        }
+                        else {
+                            var arrayOfResults = data.Data.split(",");
+                            for (i = 1; i < 82; i++)
+                            {
+                                $('#' + i).val(arrayOfResults[i]);
+                                $("#" + i).prop('disabled', true);
+                            }
+                        }
+                    })
+                    .fail(function (jqXHR, textStatus, err) {
+                        alert('Error: ' + err);
+                    });
+            });
+                
+        });
+    </script>
+}
