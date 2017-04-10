@@ -5,7 +5,7 @@ using System.Web;
 
 namespace SudokuSolver.Models
 {
-    public class Sudoku
+    public class Sudoku : ICloneable
     {
         public List<Block> Blocks { get; set; }
         public bool AtLeastOneCellSolved { get; set; }
@@ -173,6 +173,26 @@ namespace SudokuSolver.Models
             }
 
             return result;
+        }
+
+        public object Clone()
+        {
+            Sudoku s = new Sudoku();
+            foreach(var b in this.Blocks)
+            {
+                foreach(var c in b.Cells)
+                {
+                    foreach(var bb in s.Blocks)
+                    {
+                        foreach(var cc in bb.Cells)
+                        {
+                            if (c.Id == cc.Id)
+                                cc.Value = c.Value;
+                        }
+                    }
+                }
+            }
+            return s;
         }
     }
 }

@@ -35,12 +35,62 @@ namespace SudokuSolver.Controllers
         public ActionResult Solve()
         {
             string result = sudoku.Solve();
-
+            
             return Json(new { Data = result }, JsonRequestBehavior.AllowGet);
         }
 
+        private List<Sudoku> TryLuckWithChild(Sudoku s)
+        {
+            Debug.WriteLine("I am being called ...");
 
-        
+            List<Sudoku> result = new List<Sudoku>();
+
+            bool foundAnchor = false;
+            int idOfAnchorCell = 0;
+            int firstValue = 0; ;
+            int secondValue = 0;
+            foreach (var b in s.Blocks)
+            {
+                foreach (var c in b.Cells)
+                {
+                    if (c.PossibleValues.Count == 2 && c.Value == 0)
+                    {
+                        Debug.WriteLine("Cell ID " + c.Id + " has 2 possible values");
+                        foundAnchor = true;
+                        firstValue = c.PossibleValues.ElementAt(0);
+                        secondValue = c.PossibleValues.ElementAt(1);
+                        idOfAnchorCell = c.Id;
+                        c.Value = firstValue;
+                        result.Add(s);
+                        break;
+                    }
+                    if (c.PossibleValues.Count == 0 && c.Value == 0)
+                        throw new Exception();
+                }
+                if (foundAnchor)
+                    break;
+            }
+
+            if (foundAnchor)
+            {
+
+                Sudoku child = (Sudoku)s.Clone();
+                foreach (var b in child.Blocks)
+                {
+                    foreach (var c in b.Cells)
+                    {
+                        if (c.Id == idOfAnchorCell)
+                        {
+                            c.Value = secondValue;
+                        }
+                    }
+                }
+                result.Add(child);
+            }
+
+            return result;
+        }
+
 
 
     }
