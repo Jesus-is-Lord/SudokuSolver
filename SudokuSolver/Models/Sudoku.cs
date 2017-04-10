@@ -8,6 +8,8 @@ namespace SudokuSolver.Models
     public class Sudoku
     {
         public List<Block> Blocks { get; set; }
+        int iterations;
+
         public Sudoku()
         {
             Blocks = new List<Block>();
@@ -122,6 +124,51 @@ namespace SudokuSolver.Models
             result.Add(seven);
             result.Add(eight);
             result.Add(nine);
+
+            return result;
+        }
+
+        public void LockNumbers(string idValues)
+        {
+            string[] values = idValues.Split(',');
+            foreach (var b in this.Blocks)
+            {
+                foreach (var c in b.Cells)
+                {
+                    if (!values[c.Id - 1].Equals(""))
+                        c.Value = Convert.ToInt16(values[c.Id - 1]);
+                }
+            }
+        }
+
+        public string Solve()
+        {
+            bool solved = true;
+            do
+            {
+                solved = true;
+                foreach (var b in this.Blocks)
+                {
+                    foreach (var c in b.Cells)
+                    {
+                        solved = c.Solve() && solved;
+                    }
+                }
+                iterations++;
+                if (iterations > 30)
+                {
+                    return "";
+                }
+            } while (!solved);
+
+            string result = "";
+            foreach (var b in this.Blocks)
+            {
+                foreach (var c in b.Cells)
+                {
+                    result = result + "," + c.Value;
+                }
+            }
 
             return result;
         }
