@@ -8,6 +8,7 @@ namespace SudokuSolver.Models
     public class Sudoku
     {
         public List<Block> Blocks { get; set; }
+        public bool AtLeastOneCellSolved { get; set; }
         int iterations;
 
         public Sudoku()
@@ -146,6 +147,7 @@ namespace SudokuSolver.Models
             bool solved = true;
             do
             {
+                AtLeastOneCellSolved = false;
                 solved = true;
                 foreach (var b in this.Blocks)
                 {
@@ -155,7 +157,7 @@ namespace SudokuSolver.Models
                     }
                 }
                 iterations++;
-                if (iterations > 30)
+                if (!AtLeastOneCellSolved)
                 {
                     return "";
                 }
@@ -172,6 +174,5 @@ namespace SudokuSolver.Models
 
             return result;
         }
-
     }
 }
