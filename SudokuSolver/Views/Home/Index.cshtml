@@ -198,8 +198,10 @@
                 </table>
             </td>
             <td>
+                <button type="button" id="resetButton">Reset</button>
                 <button type="button" id="lockNumbersButton">Lock Numbers</button>
                 <button type="button" id="solveButton">Solve</button>
+                <img src="~/Content/animated_progress_bar.gif" id="progressBar"/>
             </td>
         </tr>
     </table>
@@ -223,6 +225,8 @@
         $(document).ready(function () {
             var result = [];
             $("#solveButton").hide();
+            $("#progressBar").hide();
+            $("#resetButton").hide();
 
             $("#lockNumbersButton").click(function () {
 
@@ -256,6 +260,10 @@
             });
 
             $("#solveButton").click(function () {
+
+                $("#progressBar").show();
+                $("#solveButton").hide();
+
                 $.getJSON('/Home/Solve/')
                     .done(function (data) {
                         if (data.Data.length === 0) {
@@ -267,12 +275,22 @@
                             {
                                 $('#' + i).val(arrayOfResults[i]);
                                 $("#" + i).prop('disabled', true);
+
+                                $("#progressBar").hide();
+                                $("#resetButton").show();
                             }
                         }
                     })
                     .fail(function (jqXHR, textStatus, err) {
                         alert('Error: ' + err);
                     });
+            });
+
+            $("#resetButton").click(function () {
+
+                location.reload();
+
+              
             });
                 
         });
