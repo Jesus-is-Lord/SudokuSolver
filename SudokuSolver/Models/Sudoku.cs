@@ -10,6 +10,37 @@ namespace SudokuSolver.Models
         public List<Block> Blocks { get; set; }
         public bool AtLeastOneCellSolved { get; set; }
         int iterations;
+        public bool IsSolved
+        {
+            get
+            {
+                foreach(var b in Blocks)
+                {
+                    foreach(var c in b.Cells)
+                    {
+                        if (c.Value == 0)
+                            return false;
+                    }
+                }
+                return true;
+            }
+        }
+        public string Solution
+        {
+            get
+            {
+                string result = "";
+                foreach (var b in this.Blocks)
+                {
+                    foreach (var c in b.Cells)
+                    {
+                        result = result + "," + c.Value;
+                    }
+                }
+
+                return result;
+            }
+        }
 
         public Sudoku()
         {
@@ -144,35 +175,25 @@ namespace SudokuSolver.Models
 
         public string Solve()
         {
-            bool solved = true;
             do
             {
                 AtLeastOneCellSolved = false;
-                solved = true;
                 foreach (var b in this.Blocks)
                 {
                     foreach (var c in b.Cells)
                     {
-                        solved = c.Solve() && solved;
+                        c.Solve();
                     }
                 }
+
                 iterations++;
                 if (!AtLeastOneCellSolved)
                 {
                     return "";
                 }
-            } while (!solved);
+            } while (!IsSolved);
 
-            string result = "";
-            foreach (var b in this.Blocks)
-            {
-                foreach (var c in b.Cells)
-                {
-                    result = result + "," + c.Value;
-                }
-            }
-
-            return result;
+            return Solution;
         }
 
         public object Clone()

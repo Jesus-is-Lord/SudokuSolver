@@ -77,19 +77,13 @@ namespace SudokuSolver.Models
             }
         }
 
-        public bool Solve()
+        public void Solve()
         {
-            if ((PossibleValues.Count == 1 && this.Value==0) || this.Value != 0)
+            if ((PossibleValues.Count == 1 && this.Value==0))
             {
-                if(this.Value == 0)
-                {
-                    this.InSudoku.AtLeastOneCellSolved = true;
-                }
+                this.InSudoku.AtLeastOneCellSolved = true;
                 this.Value = PossibleValues.ElementAt(0);
-                
-                return true;
             }
-            return false;
         }
     }
 }
