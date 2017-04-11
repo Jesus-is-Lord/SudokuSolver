@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 
@@ -9,7 +10,6 @@ namespace SudokuSolver.Models
     {
         public List<Block> Blocks { get; set; }
         public bool AtLeastOneCellSolved { get; set; }
-        int iterations;
         public bool IsSolved
         {
             get
@@ -41,9 +41,11 @@ namespace SudokuSolver.Models
                 return result;
             }
         }
+        List<Sudoku> Children { get; set; }
 
         public Sudoku()
         {
+            Children = new List<Sudoku>();
             Blocks = new List<Block>();
             List<Column> columns = BuildSudokuColumns();
             List<Row> rows = BuildSudokuRows();
@@ -67,7 +69,7 @@ namespace SudokuSolver.Models
                 }
                 Blocks.Add(b);
             }
-            
+            Children.Add(this);
         }
 
         public List<Column> BuildSudokuColumns()
@@ -175,25 +177,103 @@ namespace SudokuSolver.Models
 
         public string Solve()
         {
-            do
+            while (Children.Count > 0)
             {
-                AtLeastOneCellSolved = false;
-                foreach (var b in this.Blocks)
+                Sudoku child = Children[0];
+                do
+                {
+                    child.AtLeastOneCellSolved = false;
+                    foreach (var b in child.Blocks)
+                    {
+                        foreach (var c in b.Cells)
+                        {
+                            c.Solve();
+                        }
+                    }
+                    if (!child.AtLeastOneCellSolved)
+                    {
+                        try
+                        {
+                            Debugging(child);
+                            var c = Solution;
+                            child = TryLuckWithChild(child); // exception if wrong path found
+                        }
+                        catch(Exception)
+                        {
+                            Children.Remove(child);
+                            break;
+                        }
+                    }
+                } while (!child.IsSolved);
+
+                if(child.IsSolved)
+                {
+                    Children.Remove(child);
+                    return child.Solution;
+                }
+            }
+
+            return "";
+        }
+
+        private Sudoku TryLuckWithChild(Sudoku s)
+        {
+            Debug.WriteLine("I am being called ...");
+
+            bool foundAnchor = false;
+            int idOfAnchorCell = 0;
+            int firstValue = 0; ;
+            int secondValue = 0;
+            foreach (var b in s.Blocks)
+            {
+                foreach (var c in b.Cells)
+                {
+                    if (c.PossibleValues.Count == 2 && c.Value == 0)
+                    {
+                        Debug.WriteLine("Cell ID " + c.Id + " has 2 possible values");
+                        foundAnchor = true;
+                        firstValue = c.PossibleValues.ElementAt(0);
+                        secondValue = c.PossibleValues.ElementAt(1);
+                        idOfAnchorCell = c.Id;
+                        c.Value = firstValue;
+                        break;
+                    }
+                    if (c.PossibleValues.Count == 0 && c.Value == 0)
+                        throw new Exception();
+                }
+                if (foundAnchor)
+                    break;
+            }
+
+            if (foundAnchor)
+            {
+
+                Sudoku child = (Sudoku)s.Clone();
+                foreach (var b in child.Blocks)
                 {
                     foreach (var c in b.Cells)
                     {
-                        c.Solve();
+                        if (c.Id == idOfAnchorCell)
+                        {
+                            c.Value = secondValue;
+                        }
                     }
                 }
+                Children.Add(child);
+            }
 
-                iterations++;
-                if (!AtLeastOneCellSolved)
+            return s;
+        }
+
+        private void Debugging(Sudoku s)
+        {
+            foreach(var b in s.Blocks)
+            {
+                foreach (var c in b.Cells)
                 {
-                    return "";
+                    Debug.WriteLine("Cell " + c.Id + " has " + c.PossibleValues.Count + " possible values.");
                 }
-            } while (!IsSolved);
-
-            return Solution;
+            }
         }
 
         public object Clone()
