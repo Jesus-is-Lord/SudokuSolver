@@ -227,6 +227,7 @@
     <script language="javascript">
         $(document).ready(function () {
             var result = [];
+            var sudokuFailed = false;
             $("#solveButton").hide();
             $("#progressBar").hide();
             $("#resetButton").hide();
@@ -256,7 +257,9 @@
             };
 
             chat.client.updateSudokuUIFailed = function () {
-                alert("Puzzle too complex to crack.");
+                if (!sudokuFailed)
+                    alert("Invalid Puzzle.");
+                sudokuFailed = true;
                 $("#progressBar").hide();
                 $("#resetButton").show();
             };

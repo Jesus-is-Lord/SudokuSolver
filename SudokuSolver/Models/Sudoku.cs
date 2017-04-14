@@ -313,7 +313,7 @@ namespace SudokuSolver.Models
             }
             else
             {
-                throw new Exception(); //too hard to solve
+                throw new Exception(); //too hard to solve, no unique solution
             }
 
             return s;
