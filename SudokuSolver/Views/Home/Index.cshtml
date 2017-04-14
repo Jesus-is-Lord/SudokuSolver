@@ -221,6 +221,9 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 
+    <script src="~/Scripts/jquery.signalR-2.2.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+
     <script language="javascript">
         $(document).ready(function () {
             var result = [];
@@ -228,69 +231,63 @@
             $("#progressBar").hide();
             $("#resetButton").hide();
 
-            $("#lockNumbersButton").click(function () {
-
-                for (i = 1; i < 82; i++) {
-
-                    var currentValue = $("#" + i).val();
-
-                    if (currentValue !== "") {
-                        $("#" + i).css('color', 'red');
-                        $("#" + i).prop('disabled', true);
-                    }
-                    result.push(currentValue);
-                }
-
-                $.getJSON('/Home/LockNumbers/' + result)
-                    .done(function (data) {
-                        if (data.Data === false) {
-                            alert("error");
-                        }
-                        else {
-                            $("#lockNumbersButton").hide();
-                            $("#solveButton").show();
-                        }
-                    })
-                    .fail(function (jqXHR, textStatus, err) {
-                        alert('Error: ' + err);
-                    });
-
-                
-
-            });
-
-            $("#solveButton").click(function () {
-
-                $("#progressBar").show();
-                $("#solveButton").hide();
-
-                $.getJSON('/Home/Solve/')
-                    .done(function (data) {
-                        if (data.Data.length === 0) {
-                            alert("Puzzle too complex to crack.");
-                        }
-                        else {
-                            var arrayOfResults = data.Data.split(",");
-                            for (i = 1; i < 82; i++)
-                            {
-                                $('#' + i).val(arrayOfResults[i]);
-                                $("#" + i).prop('disabled', true);
-
-                                $("#progressBar").hide();
-                                $("#resetButton").show();
-                            }
-                        }
-                    })
-                    .fail(function (jqXHR, textStatus, err) {
-                        alert('Error: ' + err);
-                    });
-            });
 
             $("#resetButton").click(function () {
 
                 location.reload();
 
               
+            });
+
+            // Reference the auto-generated proxy for the hub.
+            var chat = $.connection.sudokuHub;
+            // Create a function that the hub can call back to display messages.
+            chat.client.updateSudokuUI = function (solution) {
+                var arrayOfResults = solution.split(",");
+                for (i = 1; i < 82; i++) {
+                    $('#' + i).val(arrayOfResults[i]);
+                }
+            };
+
+            chat.client.updateSudokuUIFinal = function (solution) {
+                $("#progressBar").hide();
+                $("#resetButton").show();
+                
+            };
+            
+            $.connection.hub.start().done(function () {
+                //chat.server.solve("4,,,,,7,,,,1,,,,,,2,3,,,,,,3,,5,,,8,,,,1,,,,,,,,,,9,8,,,7,,,,,,1,,2,,,3,,6,,,,,7,,2,,,,9,,3,,,,2,4,,6,1,");
+
+
+                $("#lockNumbersButton").click(function () {
+
+                    for (i = 1; i < 82; i++) {
+
+                        var currentValue = $("#" + i).val();
+
+                        if (currentValue !== "") {
+                            $("#" + i).css('color', 'red');
+                            $("#" + i).prop('disabled', true);
+                        }
+                        result.push(currentValue);
+                    }
+
+                    chat.server.lock(result.toString());
+                    //chat.server.lock("4,,,,,7,,,,1,,,,,,2,3,,,,,,3,,5,,,8,,,,1,,,,,,,,,,9,8,,,7,,,,,,1,,2,,,3,,6,,,,,7,,2,,,,9,,3,,,,2,4,,6,1,");
+
+                    $("#lockNumbersButton").hide();
+                    $("#solveButton").show();
+
+                });
+
+                $("#solveButton").click(function () {
+
+                    $("#progressBar").show();
+                    $("#solveButton").hide();
+
+                    chat.server.solve();
+                });
+
             });
                 
         });

@@ -42,6 +42,9 @@ namespace SudokuSolver.Models
             }
         }
         List<Sudoku> Children { get; set; }
+        public event EventHandler<SudokuUpdatedEventArgs> RaiseSudokuUpdatedEvent;
+        public event EventHandler<SudokuUpdatedEventArgs> RaiseSudokuSolvedEvent;
+
 
         public Sudoku()
         {
@@ -204,16 +207,50 @@ namespace SudokuSolver.Models
                             break;
                         }
                     }
+                    OnRaiseSudokuUpdatedEvent(new SudokuUpdatedEventArgs(child));
                 } while (!child.IsSolved);
 
                 if(child.IsSolved)
                 {
                     Children.Remove(child);
+                    OnRaiseSudokuSolvedEvent(new SudokuUpdatedEventArgs(child));
                     return child.Solution;
                 }
             }
 
             return "";
+        }
+
+        private void OnRaiseSudokuUpdatedEvent(SudokuUpdatedEventArgs e)
+        {
+            // Make a temporary copy of the event to avoid possibility of
+            // a race condition if the last subscriber unsubscribes
+            // immediately after the null check and before the event is raised.
+            EventHandler<SudokuUpdatedEventArgs> handler = RaiseSudokuUpdatedEvent;
+
+            // Event will be null if there are no subscribers
+            if (handler != null)
+            {
+                // Use the () operator to raise the event.
+                handler(this, e);
+            }
+
+        }
+
+        private void OnRaiseSudokuSolvedEvent(SudokuUpdatedEventArgs e)
+        {
+            // Make a temporary copy of the event to avoid possibility of
+            // a race condition if the last subscriber unsubscribes
+            // immediately after the null check and before the event is raised.
+            EventHandler<SudokuUpdatedEventArgs> handler = RaiseSudokuSolvedEvent;
+
+            // Event will be null if there are no subscribers
+            if (handler != null)
+            {
+                // Use the () operator to raise the event.
+                handler(this, e);
+            }
+
         }
 
         private Sudoku TryLuckWithChild(Sudoku s)

@@ -37,7 +37,7 @@ namespace SudokuSolver.Controllers
 
         public ActionResult Solve()
         {
-            string result = result = sudoku.Solve();
+            string result = sudoku.Solve();
             
             return Json(new { Data = result }, JsonRequestBehavior.AllowGet);
         }
