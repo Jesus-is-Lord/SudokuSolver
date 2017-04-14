@@ -23,6 +23,12 @@ namespace SudokuSolver.Hubs
                 sudoku = new Sudoku();
             sudoku.RaiseSudokuUpdatedEvent += HandleSudokuUpdatedEvent;
             sudoku.RaiseSudokuSolvedEvent += HandleSudokuSolvedEvent;
+            sudoku.RaiseSudokuFailedEvent += HandleSudokuFailedEvent;
+        }
+
+        private void HandleSudokuFailedEvent(object sender, EventArgs e)
+        {
+            Clients.All.updateSudokuUIFailed();
         }
 
         public void HandleSudokuUpdatedEvent(object sender, SudokuUpdatedEventArgs e)

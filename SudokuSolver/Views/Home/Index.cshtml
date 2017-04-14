@@ -254,9 +254,14 @@
                 $("#resetButton").show();
                 
             };
+
+            chat.client.updateSudokuUIFailed = function () {
+                alert("Puzzle too complex to crack.");
+                $("#progressBar").hide();
+                $("#resetButton").show();
+            };
             
             $.connection.hub.start().done(function () {
-                //chat.server.solve("4,,,,,7,,,,1,,,,,,2,3,,,,,,3,,5,,,8,,,,1,,,,,,,,,,9,8,,,7,,,,,,1,,2,,,3,,6,,,,,7,,2,,,,9,,3,,,,2,4,,6,1,");
 
 
                 $("#lockNumbersButton").click(function () {

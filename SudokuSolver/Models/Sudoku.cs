@@ -44,6 +44,7 @@ namespace SudokuSolver.Models
         List<Sudoku> Children { get; set; }
         public event EventHandler<SudokuUpdatedEventArgs> RaiseSudokuUpdatedEvent;
         public event EventHandler<SudokuUpdatedEventArgs> RaiseSudokuSolvedEvent;
+        public event EventHandler RaiseSudokuFailedEvent;
 
 
         public Sudoku()
@@ -218,7 +219,20 @@ namespace SudokuSolver.Models
                 }
             }
 
+            OnRaiseSudokuFailedEvent(EventArgs.Empty);
             return "";
+        }
+
+        private void OnRaiseSudokuFailedEvent(EventArgs empty)
+        {
+            EventHandler handler = RaiseSudokuFailedEvent;
+
+            // Event will be null if there are no subscribers
+            if (handler != null)
+            {
+                // Use the () operator to raise the event.
+                handler(this, empty);
+            }
         }
 
         private void OnRaiseSudokuUpdatedEvent(SudokuUpdatedEventArgs e)
@@ -256,7 +270,6 @@ namespace SudokuSolver.Models
         private Sudoku TryLuckWithChild(Sudoku s)
         {
             Debug.WriteLine("I am being called ...");
-
             bool foundAnchor = false;
             int idOfAnchorCell = 0;
             int firstValue = 0; ;
@@ -276,7 +289,7 @@ namespace SudokuSolver.Models
                         break;
                     }
                     if (c.PossibleValues.Count == 0 && c.Value == 0)
-                        throw new Exception();
+                        throw new Exception(); // deadend
                 }
                 if (foundAnchor)
                     break;
@@ -297,6 +310,10 @@ namespace SudokuSolver.Models
                     }
                 }
                 Children.Add(child);
+            }
+            else
+            {
+                throw new Exception(); //too hard to solve
             }
 
             return s;
