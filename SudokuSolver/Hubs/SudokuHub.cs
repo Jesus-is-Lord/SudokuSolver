@@ -10,45 +10,68 @@ namespace SudokuSolver.Hubs
 {
     public class SudokuHub : Hub
     {
-        public static Sudoku sudoku;
-
-        public void Hello()
-        {
-            Clients.All.hello();
-        }
+        static Dictionary<string, Sudoku> dictionary;
 
         public SudokuHub()
         {
-            if(sudoku==null)
-                sudoku = new Sudoku();
-            sudoku.RaiseSudokuUpdatedEvent += HandleSudokuUpdatedEvent;
-            sudoku.RaiseSudokuSolvedEvent += HandleSudokuSolvedEvent;
-            sudoku.RaiseSudokuFailedEvent += HandleSudokuFailedEvent;
+            if (dictionary == null)
+                dictionary = new Dictionary<string, Sudoku>();
         }
 
         private void HandleSudokuFailedEvent(object sender, EventArgs e)
         {
-            Clients.All.updateSudokuUIFailed();
+            foreach (var d in dictionary)
+            {
+                if (d.Value.Equals((Sudoku)sender))
+                {
+                    Clients.Group(d.Key).updateSudokuUIFailed();
+                }
+            }
         }
 
         public void HandleSudokuUpdatedEvent(object sender, SudokuUpdatedEventArgs e)
         {
-            Clients.All.updateSudokuUI(e.Sudoku.Solution);
+            foreach (var d in dictionary)
+            {
+                if (d.Value.Equals((Sudoku)sender))
+                {
+                    Clients.Group(d.Key).updateSudokuUI(e.Sudoku.Solution);
+                }
+            }
         }
 
         public void HandleSudokuSolvedEvent(object sender, SudokuUpdatedEventArgs e)
         {
-            Clients.All.updateSudokuUIFinal(e.Sudoku.Solution);
+            foreach (var d in dictionary)
+            {
+                if (d.Value.Equals((Sudoku)sender))
+                {
+                    Clients.Group(d.Key).updateSudokuUIFinal(e.Sudoku.Solution);
+                }
+            }
         }
 
         public void Solve()
         {
-            sudoku.Solve();
+            dictionary[Context.ConnectionId].Solve();
         }
 
         public void Lock(string game)
         {
-            sudoku.LockNumbers(game);
+            dictionary[Context.ConnectionId].LockNumbers(game);
+        }
+
+        public override Task OnConnected()
+        {
+            Sudoku sudoku = new Sudoku();
+            sudoku.RaiseSudokuUpdatedEvent += HandleSudokuUpdatedEvent;
+            sudoku.RaiseSudokuSolvedEvent += HandleSudokuSolvedEvent;
+            sudoku.RaiseSudokuFailedEvent += HandleSudokuFailedEvent;
+
+            dictionary.Add(Context.ConnectionId, sudoku);
+            Groups.Add(Context.ConnectionId, Context.ConnectionId);
+
+            return base.OnConnected();
         }
     }
 }
