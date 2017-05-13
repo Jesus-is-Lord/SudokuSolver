@@ -198,6 +198,7 @@
                 </table>
             </td>
             <td>
+                <button type="button" id="generateButton">Generate</button>
                 <button type="button" id="resetButton">Reset</button>
                 <button type="button" id="lockNumbersButton">Lock Numbers</button>
                 <button type="button" id="solveButton">Solve</button>
@@ -250,6 +251,16 @@
                 }
             };
 
+            chat.client.sudokuGenerated = function (solution) {
+                $("#progressBar").hide();
+                var arrayOfResults = solution.split(",");
+                for (i = 1; i < 82; i++) {
+                    if (arrayOfResults[i]!=0)
+                        $('#' + i).val(arrayOfResults[i]);
+                }
+                $("#generateButton").prop('disabled', false);
+            };
+
             chat.client.updateSudokuUIFinal = function (solution) {
                 $("#progressBar").hide();
                 $("#resetButton").show();
@@ -266,6 +277,18 @@
             
             $.connection.hub.start().done(function () {
 
+                $("#generateButton").click(function () {
+                    $("#progressBar").show();
+                    for (i = 1; i < 82; i++) {
+                        $('#' + i).val('');
+                        $("#" + i).prop('disabled', false);
+                        $("#" + i).css('color', 'black');
+                    }
+                    $("#generateButton").prop('disabled', true);
+                    $("#lockNumbersButton").show();
+                    chat.server.generate();
+
+                });
 
                 $("#lockNumbersButton").click(function () {
 

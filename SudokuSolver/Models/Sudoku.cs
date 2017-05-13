@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Web;
 
 namespace SudokuSolver.Models
@@ -45,6 +46,7 @@ namespace SudokuSolver.Models
         public event EventHandler<SudokuUpdatedEventArgs> RaiseSudokuUpdatedEvent;
         public event EventHandler<SudokuUpdatedEventArgs> RaiseSudokuSolvedEvent;
         public event EventHandler RaiseSudokuFailedEvent;
+        public event EventHandler<SudokuUpdatedEventArgs> RaiseSudokuGeneratedEvent;
 
 
         public Sudoku()
@@ -223,6 +225,47 @@ namespace SudokuSolver.Models
             return "";
         }
 
+        public string Solve1()
+        {
+            while (Children.Count > 0)
+            {
+                Sudoku child = Children[0];
+                do
+                {
+                    child.AtLeastOneCellSolved = false;
+                    foreach (var b in child.Blocks)
+                    {
+                        foreach (var c in b.Cells)
+                        {
+                            c.Solve();
+                        }
+                    }
+                    if (!child.AtLeastOneCellSolved)
+                    {
+                        try
+                        {
+                            Debugging(child);
+                            var c = Solution;
+                            child = TryLuckWithChild(child, 2); // exception if wrong path found
+                        }
+                        catch (Exception)
+                        {
+                            Children.Remove(child);
+                            break;
+                        }
+                    }
+                } while (!child.IsSolved);
+
+                if (child.IsSolved)
+                {
+                    Children.Remove(child);
+                    return child.Solution;
+                }
+            }
+
+            return "";
+        }
+
         private void OnRaiseSudokuFailedEvent(EventArgs empty)
         {
             EventHandler handler = RaiseSudokuFailedEvent;
@@ -251,6 +294,22 @@ namespace SudokuSolver.Models
 
         }
 
+        private void OnRaiseSudokuGeneratedEvent(SudokuUpdatedEventArgs e)
+        {
+            // Make a temporary copy of the event to avoid possibility of
+            // a race condition if the last subscriber unsubscribes
+            // immediately after the null check and before the event is raised.
+            EventHandler<SudokuUpdatedEventArgs> handler = RaiseSudokuGeneratedEvent;
+
+            // Event will be null if there are no subscribers
+            if (handler != null)
+            {
+                // Use the () operator to raise the event.
+                handler(this, e);
+            }
+
+        }
+
         private void OnRaiseSudokuSolvedEvent(SudokuUpdatedEventArgs e)
         {
             // Make a temporary copy of the event to avoid possibility of
@@ -265,6 +324,83 @@ namespace SudokuSolver.Models
                 handler(this, e);
             }
 
+        }
+
+        public void Generate()
+        {
+            string solution = "";
+            Sudoku game = null;
+            do
+            {
+                int[] values = new int[81];
+                Random rnd = new Random();
+                List<int> available = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+                List<int> indexes = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+                for (int i = 0; i < 6; i++)
+                {
+                    var index = indexes[rnd.Next(indexes.Count)];
+                    indexes = indexes.Where(ii => ii != index).ToList();
+
+                    var value = available[rnd.Next(available.Count)];
+                    available = available.Where(ii => ii != value).ToList();
+
+                    values[index] = value;
+                }
+
+                int y = 0;
+                Sudoku s = new Sudoku();
+                foreach (var b in s.Blocks)
+                {
+                    foreach (var c in b.Cells)
+                    {
+                        if (values[y] != 0)
+                        {
+                            c.Value = values[y];
+                        }
+                        y++;
+                    }
+                }
+
+                try
+                {
+                    foreach (var b in s.Blocks)
+                    {
+                        if (b.Id == 1)
+                            continue;
+
+                        indexes = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+                        var index1 = indexes[rnd.Next(indexes.Count)];
+                        indexes = indexes.Where(ii => ii != index1).ToList();
+                        var index2 = indexes[rnd.Next(indexes.Count)];
+
+                        foreach (var c in b.Cells)
+                        {
+                            if (c.Id == (b.Id - 1) * 9 + index1 || c.Id == (b.Id - 1) * 9 + index2)
+                            {
+                                c.Value = c.PossibleValues[rnd.Next(c.PossibleValues.Count)];
+                            }
+
+                        }
+                    }
+                    game = (Sudoku)s.Clone();
+                }
+                catch (Exception)
+                {
+                    solution = "";
+                    continue;
+                }
+                Thread newThread = new Thread(() => { solution = s.Solve1(); });
+                newThread.Start();
+                if (!newThread.Join(new TimeSpan(0, 0, 10)))
+                {
+                    newThread.Abort();
+                    solution = "";
+                    continue;
+                }
+            }
+            while (solution == "");
+
+            OnRaiseSudokuGeneratedEvent(new SudokuUpdatedEventArgs(game));
         }
 
         private Sudoku TryLuckWithChild(Sudoku s, int branches)

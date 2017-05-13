@@ -51,9 +51,25 @@ namespace SudokuSolver.Hubs
             }
         }
 
+        public void HandleSudokuGeneratedEvent(object sender, SudokuUpdatedEventArgs e)
+        {
+            foreach (var d in dictionary)
+            {
+                if (d.Value.Equals((Sudoku)sender))
+                {
+                    Clients.Group(d.Key).sudokuGenerated(e.Sudoku.Solution);
+                }
+            }
+        }
+
         public void Solve()
         {
             dictionary[Context.ConnectionId].Solve();
+        }
+
+        public void Generate()
+        {
+            dictionary[Context.ConnectionId].Generate();
         }
 
         public void Lock(string game)
@@ -67,6 +83,7 @@ namespace SudokuSolver.Hubs
             sudoku.RaiseSudokuUpdatedEvent += HandleSudokuUpdatedEvent;
             sudoku.RaiseSudokuSolvedEvent += HandleSudokuSolvedEvent;
             sudoku.RaiseSudokuFailedEvent += HandleSudokuFailedEvent;
+            sudoku.RaiseSudokuGeneratedEvent += HandleSudokuGeneratedEvent;
 
             dictionary.Add(Context.ConnectionId, sudoku);
             Groups.Add(Context.ConnectionId, Context.ConnectionId);
