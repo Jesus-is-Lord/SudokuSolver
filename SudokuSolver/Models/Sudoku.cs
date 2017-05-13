@@ -332,54 +332,57 @@ namespace SudokuSolver.Models
             Sudoku game = null;
             do
             {
-                int[] values = new int[81];
+                
                 Random rnd = new Random();
-                List<int> available = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-                List<int> indexes = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
-                for (int i = 0; i < 4; i++)
-                {
-                    var index = indexes[rnd.Next(indexes.Count)];
-                    indexes = indexes.Where(ii => ii != index).ToList();
-
-                    var value = available[rnd.Next(available.Count)];
-                    available = available.Where(ii => ii != value).ToList();
-
-                    values[index] = value;
-                }
-
-                int y = 0;
+                
                 Sudoku s = new Sudoku();
-                foreach (var b in s.Blocks)
-                {
-                    foreach (var c in b.Cells)
-                    {
-                        if (values[y] != 0)
-                        {
-                            c.Value = values[y];
-                        }
-                        y++;
-                    }
-                }
-
                 try
                 {
                     foreach (var b in s.Blocks)
                     {
-                        if (b.Id == 1)
-                            continue;
-
-                        indexes = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-                        var index1 = indexes[rnd.Next(indexes.Count)];
-                        indexes = indexes.Where(ii => ii != index1).ToList();
-                        var index2 = indexes[rnd.Next(indexes.Count)];
+                        var number = rnd.Next(1, 6);
+                         List<int> indexes = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+                        List<int> ind = new List<int>();
+                        for (int i = 0; i < number; i++)
+                        {    
+                            ind.Add(indexes[rnd.Next(indexes.Count)]);
+                            indexes = indexes.Where(ii => ii != ind[i]).ToList();
+                        }
 
                         foreach (var c in b.Cells)
                         {
-                            if (c.Id == (b.Id - 1) * 9 + index1 || c.Id == (b.Id - 1) * 9 + index2)
-                            {
-                                c.Value = c.PossibleValues[rnd.Next(c.PossibleValues.Count)];
+                            switch (ind.Count) {
+                                case 1:
+                                    if (c.Id == (b.Id - 1) * 9 + ind[0])
+                                    {
+                                        c.Value = c.PossibleValues[rnd.Next(c.PossibleValues.Count)];
+                                    }
+                                    break;
+                                case 2:
+                                    if(c.Id == (b.Id - 1) * 9 + ind[0] || c.Id == (b.Id - 1) * 9 + ind[1])
+                                    {
+                                        c.Value = c.PossibleValues[rnd.Next(c.PossibleValues.Count)];
+                                    }
+                                    break;
+                                case 3:
+                                    if (c.Id == (b.Id - 1) * 9 + ind[0] || c.Id == (b.Id - 1) * 9 + ind[1] || c.Id == (b.Id - 1) * 9 + ind[2])
+                                    {
+                                        c.Value = c.PossibleValues[rnd.Next(c.PossibleValues.Count)];
+                                    }
+                                    break;
+                                case 4:
+                                    if (c.Id == (b.Id - 1) * 9 + ind[0] || c.Id == (b.Id - 1) * 9 + ind[1] || c.Id == (b.Id - 1) * 9 + ind[2] || c.Id == (b.Id - 1) * 9 + ind[3])
+                                    {
+                                        c.Value = c.PossibleValues[rnd.Next(c.PossibleValues.Count)];
+                                    }
+                                    break;
+                                case 5:
+                                    if (c.Id == (b.Id - 1) * 9 + ind[0] || c.Id == (b.Id - 1) * 9 + ind[1] || c.Id == (b.Id - 1) * 9 + ind[2] || c.Id == (b.Id - 1) * 9 + ind[3] || c.Id == (b.Id - 1) * 9 + ind[4])
+                                    {
+                                        c.Value = c.PossibleValues[rnd.Next(c.PossibleValues.Count)];
+                                    }
+                                    break;
                             }
-
                         }
                     }
                     game = (Sudoku)s.Clone();
