@@ -336,7 +336,7 @@ namespace SudokuSolver.Models
                 Random rnd = new Random();
                 List<int> available = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
                 List<int> indexes = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
-                for (int i = 0; i < 6; i++)
+                for (int i = 0; i < 4; i++)
                 {
                     var index = indexes[rnd.Next(indexes.Count)];
                     indexes = indexes.Where(ii => ii != index).ToList();
