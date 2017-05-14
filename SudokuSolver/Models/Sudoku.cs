@@ -183,6 +183,9 @@ namespace SudokuSolver.Models
 
         public string Solve()
         {
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+
             while (Children.Count > 0)
             {
                 Sudoku child = Children[0];
@@ -217,6 +220,8 @@ namespace SudokuSolver.Models
                 {
                     Children.Remove(child);
                     OnRaiseSudokuSolvedEvent(new SudokuUpdatedEventArgs(child));
+                    stopWatch.Stop();
+                    Debug.WriteLine("Solved in " + stopWatch.ElapsedMilliseconds / 1000 + " seconds.");
                     return child.Solution;
                 }
             }
@@ -392,11 +397,21 @@ namespace SudokuSolver.Models
                     solution = "";
                     continue;
                 }
-                Thread newThread = new Thread(() => { solution = s.Solve1(); });
+                Stopwatch stopWatch = new Stopwatch();
+                Thread newThread = new Thread(() => {
+                    stopWatch.Start();
+                    solution = s.Solve1();
+                    stopWatch.Stop();
+                });
                 newThread.Start();
-                if (!newThread.Join(new TimeSpan(0, 0, 10)))
+                if (!newThread.Join(new TimeSpan(0, 0, 10))) //if computer is taking longer than 10 seconds to solve a potentially dead sudoku, ignore
                 {
                     newThread.Abort();
+                    solution = "";
+                    continue;
+                }
+                if(stopWatch.ElapsedMilliseconds / 1000 < 2) //if computer solves it in less than 2 seconds, ignore sudoku and find another
+                {
                     solution = "";
                     continue;
                 }
